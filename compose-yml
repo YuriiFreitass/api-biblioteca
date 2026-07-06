@@ -1,0 +1,16 @@
+services:
+  mysql:
+    imagem: mysql:9.x
+    ports:
+     - "3306:3306"
+
+   enviroment:
+    MYSQL_ROOT_PASSWORD: ${ENV_ROOT_PASSWORD}
+    MYSQL_USER: ${ENV_MYSQL_USER}
+    MYSQL_PASSWORD: ${ENV_MYSQL_PASSWORD}
+    MYSQL_DATABASE: biblioteca
+
+   volumes:
+     - library-api-db:/var/lib/mysql
+  volumes:
+    library-api-db:
