@@ -38,5 +38,17 @@ public class LivroController {
 		return livroService.save(livroRequestDto);
 	}
 
+	@PutMapping("/{id}")
+	@ResponseStatus(HttpStatus.OK)
+	public LivroResponseDto update(@PathVariable Long id, @Valid @RequestBody LivroRequestDto livroRequestDto) {
+		return livroService.update(id, livroRequestDto);
+	}
+
+	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void delete(@PathVariable Long id) {
+		 livroService.deleteById(id);
+	}
+
 
 }

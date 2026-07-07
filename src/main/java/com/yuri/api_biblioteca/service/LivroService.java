@@ -4,6 +4,7 @@ package com.yuri.api_biblioteca.service;
 import com.yuri.api_biblioteca.dto.LivroRequestDto;
 import com.yuri.api_biblioteca.dto.LivroResponseDto;
 import com.yuri.api_biblioteca.entity.LivroEntity;
+import com.yuri.api_biblioteca.exception.LivroNaoEncontradoException;
 import com.yuri.api_biblioteca.repository.LivroRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,8 +43,24 @@ public class LivroService {
 		LivroEntity livroSalvo = livroRepository.save(livro);
 
 		return toResponseDto(livroSalvo);
+	}
 
+	public LivroResponseDto update(Long id, LivroRequestDto livroRequestDto) {
+		LivroEntity livro = livroRepository.findById(id)
+				.orElseThrow(() -> new LivroNaoEncontradoException(id));
+		livro.setTitulo(livroRequestDto.getTitulo());
+		livro.setAutor(livroRequestDto.getAutor());
+		livro.setIsbn(livroRequestDto.getIsbn());
+		livro.setAnoPublicacao(livroRequestDto.getAnoPublicacao());
 
+		LivroEntity livroAtualizado = livroRepository.save(livro);
+		return toResponseDto(livroAtualizado);
+	}
+
+	public void deleteById(Long id) {
+		LivroEntity livro = livroRepository.findById(id)
+				.orElseThrow(() -> new LivroNaoEncontradoException(id));
+		livroRepository.delete(livro);
 	}
 
 	private LivroResponseDto toResponseDto(LivroEntity livro) {
