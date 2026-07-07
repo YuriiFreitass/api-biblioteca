@@ -22,20 +22,20 @@ public class LivroController {
 
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
-	public List<LivroRequestDto> findAll() {
+	public List<LivroResponseDto> findAll() {
 		return livroService.findAll();
 	}
 
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/buscar")
-	public List<LivroRequestDto> findByTitulo(@RequestParam String titulo) {
+	public List<LivroResponseDto> findByTitulo(@RequestParam String titulo) {
 		return livroService.findByTitulo(titulo);
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public LivroResponseDtoDto save(@Valid @RequestBody LivroResponseDto livroResponseDto) {
-		return livroService.save(livroResponseDto);
+	public LivroResponseDto save(@Valid @RequestBody LivroRequestDto livroRequestDto) {
+		return livroService.save(livroRequestDto);
 	}
 
 
