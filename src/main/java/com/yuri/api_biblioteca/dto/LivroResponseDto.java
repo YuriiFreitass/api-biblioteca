@@ -5,5 +5,7 @@ public record LivroResponseDto(
 		String titulo,
 		String autor,
 		String isbn,
-		Integer anoPublicacao
+		Integer anoPublicacao,
+		Integer quantidade
+
 ) {}
