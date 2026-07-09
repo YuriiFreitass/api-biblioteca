@@ -1,15 +1,15 @@
 package com.yuri.api_biblioteca.dto;
-
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
 
 public record LivroRequestDto(
 		@NotBlank String titulo,
 		@NotBlank String autor,
 		@NotBlank String isbn,
-		@NonNull Integer anoPublicacao,
-		@NonNull Integer quantidade
+		@NotNull Integer anoPublicacao,
+		@NotNull @PositiveOrZero Integer quantidade
 
 ) {}
 

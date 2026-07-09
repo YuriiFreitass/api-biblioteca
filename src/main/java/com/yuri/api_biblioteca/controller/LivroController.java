@@ -2,7 +2,6 @@ package com.yuri.api_biblioteca.controller;
 
 import com.yuri.api_biblioteca.dto.LivroRequestDto;
 import com.yuri.api_biblioteca.dto.LivroResponseDto;
-import com.yuri.api_biblioteca.entity.LivroEntity;
 import com.yuri.api_biblioteca.service.LivroService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/livros")
 @RequiredArgsConstructor
-@Validated
 public class LivroController {
 
 	private final LivroService livroService;
@@ -27,7 +25,7 @@ public class LivroController {
 	}
 
 	@ResponseStatus(HttpStatus.OK)
-	@GetMapping("/buscar")
+	@GetMapping("/titulo")
 	public List<LivroResponseDto> findByTitulo(@RequestParam String titulo) {
 		return livroService.findByTitulo(titulo);
 	}
