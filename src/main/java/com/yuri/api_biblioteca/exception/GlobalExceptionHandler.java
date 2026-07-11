@@ -1,6 +1,7 @@
 package com.yuri.api_biblioteca.exception;
 
 import com.yuri.api_biblioteca.dto.ErrorResponseDto;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
@@ -25,6 +26,18 @@ public class GlobalExceptionHandler {
 					mensagem
 			);
 			return ResponseEntity.badRequest().body(erro);
+		}
+
+		@ExceptionHandler(IsbnDuplicadoException.class)
+		public ResponseEntity<ErrorResponseDto> handleIsbnDuplicadoException(
+				IsbnDuplicadoException exception) {
+			String mensagem = exception.getMessage();
+
+			ErrorResponseDto erro = new ErrorResponseDto(
+					HttpStatus.CONFLICT.value(), mensagem
+			);
+
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
 		}
 
 

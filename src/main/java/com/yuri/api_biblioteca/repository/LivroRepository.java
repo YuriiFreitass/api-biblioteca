@@ -12,8 +12,5 @@ public interface LivroRepository extends JpaRepository<LivroEntity, Long> {
 
 	List<LivroEntity> findByTitulo(String titulo);
 
-	List<LivroEntity> save(LivroResponseDto livroResponseDto);
-
-	List<LivroEntity> findAll();
-
+	boolean existsByIsbn(String isbn);
 }

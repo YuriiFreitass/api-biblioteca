@@ -4,6 +4,7 @@ package com.yuri.api_biblioteca.service;
 import com.yuri.api_biblioteca.dto.LivroRequestDto;
 import com.yuri.api_biblioteca.dto.LivroResponseDto;
 import com.yuri.api_biblioteca.entity.LivroEntity;
+import com.yuri.api_biblioteca.exception.IsbnDuplicadoException;
 import com.yuri.api_biblioteca.exception.LivroNaoEncontradoException;
 import com.yuri.api_biblioteca.mapper.LivroMapper;
 import com.yuri.api_biblioteca.repository.LivroRepository;
@@ -37,6 +38,9 @@ public class LivroService {
 	public LivroResponseDto save(LivroRequestDto livroRequestDto) {
 		LivroEntity livro = livroMapper.toEntity(livroRequestDto);
 
+		if (livroRepository.existsByIsbn(livroRequestDto.isbn())) {
+			throw new IsbnDuplicadoException("ISBN já cadastrado");
+		}
 		LivroEntity livroSalvo = livroRepository.save(livro);
 		return livroMapper.toResponseDto(livroSalvo);
 
