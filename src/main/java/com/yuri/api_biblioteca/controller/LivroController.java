@@ -5,10 +5,10 @@ import com.yuri.api_biblioteca.dto.LivroResponseDto;
 import com.yuri.api_biblioteca.service.LivroService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @RestController
@@ -20,8 +20,8 @@ public class LivroController {
 
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
-	public List<LivroResponseDto> findAll() {
-		return livroService.findAll();
+	public Pagegit <LivroResponseDto> findAll(Pageable pageable) {
+		return livroService.findAll(pageable);
 	}
 
 	@ResponseStatus(HttpStatus.OK)
@@ -40,6 +40,12 @@ public class LivroController {
 	@ResponseStatus(HttpStatus.OK)
 	public LivroResponseDto update(@PathVariable Long id, @Valid @RequestBody LivroRequestDto livroRequestDto) {
 		return livroService.update(id, livroRequestDto);
+	}
+
+	@GetMapping("/isbn/{isbn}")
+	@ResponseStatus(HttpStatus.OK)
+	public LivroResponseDto findByIsbn(@PathVariable String isbn) {
+		return livroService.findByIsbn(isbn);
 	}
 
 	@DeleteMapping("/{id}")

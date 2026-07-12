@@ -10,6 +10,9 @@ import com.yuri.api_biblioteca.mapper.LivroMapper;
 import com.yuri.api_biblioteca.repository.LivroRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 
 import java.util.List;
 
@@ -21,11 +24,10 @@ public class LivroService {
 	private final LivroRepository livroRepository;
 	private final LivroMapper livroMapper;
 
-	public List<LivroResponseDto> findAll() {
-		return livroRepository.findAll()
-				.stream()
-				.map(livroMapper::toResponseDto)
-				.toList();
+	public Page<LivroResponseDto> findAll(Pageable pageable) {
+		return livroRepository.findAll(pageable)
+				.map(livroMapper::toResponseDto);
+
 	}
 
 	public List<LivroResponseDto> findByTitulo(String titulo) {
@@ -43,12 +45,11 @@ public class LivroService {
 		}
 		LivroEntity livroSalvo = livroRepository.save(livro);
 		return livroMapper.toResponseDto(livroSalvo);
-
 	}
 
 	public LivroResponseDto update(Long id, LivroRequestDto livroRequestDto) {
 		LivroEntity livro = livroRepository.findById(id)
-				.orElseThrow(() -> new LivroNaoEncontradoException(id));
+				.orElseThrow(() -> new LivroNaoEncontradoException("Livro com o ID " + id + " não foi encontrado"));
 
 		livroMapper.updateEntityFromDto(livroRequestDto, livro);
 
@@ -59,8 +60,13 @@ public class LivroService {
 
 	public void deleteById(Long id) {
 		LivroEntity livro = livroRepository.findById(id)
-				.orElseThrow(() -> new LivroNaoEncontradoException(id));
+				.orElseThrow(() -> new LivroNaoEncontradoException("Livro com o ID " + id + " não foi encontrado"));
 		livroRepository.delete(livro);
 	}
 
+	public LivroResponseDto findByIsbn(String isbn) {
+			LivroEntity livro = livroRepository.findByIsbn(isbn)
+					.orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado com ISBN" + isbn + " não foi encontrado"));
+			return livroMapper.toResponseDto(livro);
+	}
 }
