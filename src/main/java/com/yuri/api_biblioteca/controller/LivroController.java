@@ -20,7 +20,7 @@ public class LivroController {
 
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
-	public Pagegit <LivroResponseDto> findAll(Pageable pageable) {
+	public Page <LivroResponseDto> findAll(Pageable pageable) {
 		return livroService.findAll(pageable);
 	}
 
