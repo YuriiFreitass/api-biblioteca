@@ -9,17 +9,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-@Tag(
-		name = "Livros",
-		description = "Endpoints para gerenciamento de livros"
-)
+@Tag(name = "Livros", description = "Endpoints para gerenciamento de livros")
 @RestController
 @RequestMapping("/v1/livros")
 @RequiredArgsConstructor
@@ -31,7 +31,7 @@ public class LivroController {
 	@ApiResponse(responseCode = "200", description = "Livros retornados com sucesso")
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
-	public Page<LivroResponseDto> findAll(Pageable pageable) {
+	public Page<LivroResponseDto> findAll(@ParameterObject @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 		return livroService.findAll(pageable);
 	}
 
