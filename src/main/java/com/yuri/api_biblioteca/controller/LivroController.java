@@ -75,5 +75,16 @@ public class LivroController {
 		livroService.deleteById(id);
 	}
 
+	@Operation(summary = "Buscar livro por ID")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Livro encontrado"),
+			@ApiResponse(responseCode = "404", description = "Livro não encontrado")
+	})
+	@GetMapping("/{id}")
+	@ResponseStatus(HttpStatus.OK)
+	public LivroResponseDto findById(@PathVariable Long id) {
+		return livroService.findById(id);
+	}
+
 
 }

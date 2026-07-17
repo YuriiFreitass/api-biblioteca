@@ -37,6 +37,18 @@ public class LivroService {
 				.toList();
 	}
 
+	public LivroResponseDto findByIsbn(String isbn) {
+		LivroEntity livro = livroRepository.findByIsbn(isbn)
+				.orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado com ISBN" + isbn + " não foi encontrado"));
+		return livroMapper.toResponseDto(livro);
+	}
+
+	public LivroResponseDto findById(Long id) {
+		LivroEntity livro = livroRepository.findById(id)
+				.orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontado com o ID " + id));
+		return livroMapper.toResponseDto(livro);
+	}
+
 	public LivroResponseDto save(LivroRequestDto livroRequestDto) {
 		LivroEntity livro = livroMapper.toEntity(livroRequestDto);
 
@@ -48,14 +60,18 @@ public class LivroService {
 	}
 
 	public LivroResponseDto update(Long id, LivroRequestDto livroRequestDto) {
-		LivroEntity livro = livroRepository.findById(id)
+		LivroEntity livroExistente = livroRepository.findById(id)
 				.orElseThrow(() -> new LivroNaoEncontradoException("Livro com o ID " + id + " não foi encontrado"));
 
-		livroMapper.updateEntityFromDto(livroRequestDto, livro);
+		if (livroRepository.existsByIsbnAndIdNot((livroRequestDto.isbn()), id)) {
+			throw  new IsbnDuplicadoException("ISBN já cadastrado");
+		}
 
-		LivroEntity atualizado = livroRepository.save(livro);
+		livroMapper.updateEntityFromDto(livroRequestDto, livroExistente);
 
-		return livroMapper.toResponseDto(atualizado);
+		LivroEntity livroAtualizado = livroRepository.save(livroExistente);
+
+		return livroMapper.toResponseDto(livroAtualizado);
 	}
 
 	public void deleteById(Long id) {
@@ -64,9 +80,4 @@ public class LivroService {
 		livroRepository.delete(livro);
 	}
 
-	public LivroResponseDto findByIsbn(String isbn) {
-			LivroEntity livro = livroRepository.findByIsbn(isbn)
-					.orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado com ISBN" + isbn + " não foi encontrado"));
-			return livroMapper.toResponseDto(livro);
-	}
 }
