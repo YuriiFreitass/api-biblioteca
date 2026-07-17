@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -306,6 +307,12 @@ class LivroServiceTest {
 		verify(livroRepository, never()).findById(anyLong());
 		verify(livroMapper, never()).updateEntityFromDto(any(), any());
 		verify(livroRepository, never()).save(any());
+	}
+
+	@Test
+	void gerarSenha() {
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		System.out.println(passwordEncoder.encode("admin123"));
 	}
 
 	// ===========================
