@@ -5,6 +5,9 @@ import com.yuri.api_biblioteca.dto.EmprestimoRequestDto;
 import com.yuri.api_biblioteca.entity.EmprestimoEntity;
 import com.yuri.api_biblioteca.entity.LivroEntity;
 import com.yuri.api_biblioteca.enums.StatusEmprestimo;
+import com.yuri.api_biblioteca.exception.EmprestimoJaDevolvidoException;
+import com.yuri.api_biblioteca.exception.EmprestimoNaoEncontradoException;
+import com.yuri.api_biblioteca.exception.LivroIndisponivelException;
 import com.yuri.api_biblioteca.exception.LivroNaoEncontradoException;
 import com.yuri.api_biblioteca.mapper.EmprestimoMapper;
 import com.yuri.api_biblioteca.repository.EmprestimoRepository;
@@ -32,7 +35,7 @@ public class EmprestimoService {
 				.orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado"));
 
 		if (livro.getQuantidade() <= 0) {
-			throw  new LivroNaoEncontradoException("Livro indisponível");
+			throw  new LivroIndisponivelException("Livro indisponível");
 		}
 
 		EmprestimoEntity emprestimo = emprestimoMapper.toEntity(emprestimoRequestDto);
@@ -56,10 +59,10 @@ public class EmprestimoService {
 
 		EmprestimoEntity emprestimo = emprestimoRepository
 				.findById(emprestimoId)
-				.orElseThrow(() -> new RuntimeException("Empréstimo não encontrado"));
+				.orElseThrow(() -> new EmprestimoNaoEncontradoException("Empréstimo não encontrado"));
 
 		if (emprestimo.getStatus() == StatusEmprestimo.DEVOLVIDO) {
-			throw new RuntimeException("Este empréstimo já foi devolvido");
+			throw new EmprestimoJaDevolvidoException("Este empréstimo já foi devolvido");
 		}
 
 		emprestimo.setDataDevolucao(LocalDate.now());

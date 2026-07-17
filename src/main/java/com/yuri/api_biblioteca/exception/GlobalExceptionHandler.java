@@ -61,4 +61,43 @@ public class GlobalExceptionHandler {
 				.body(erro);
 	}
 
+	@ExceptionHandler(LivroIndisponivelException.class)
+	public ResponseEntity<ErrorResponseDto> handleLivroIndisponivelException(
+			LivroIndisponivelException exception) {
+				ErrorResponseDto erro = new ErrorResponseDto(
+						HttpStatus.CONFLICT.value(),
+						exception.getMessage(),
+						List.of()
+				);
+				return ResponseEntity
+						.status(HttpStatus.CONFLICT)
+						.body(erro);
+	}
+
+	@ExceptionHandler(EmprestimoNaoEncontradoException.class)
+	public ResponseEntity<ErrorResponseDto> handleEmprestimoNaoEncontradoException(
+			EmprestimoNaoEncontradoException exception) {
+		ErrorResponseDto erro = new ErrorResponseDto(
+				HttpStatus.NOT_FOUND.value(),
+				exception.getMessage(),
+				List.of()
+		);
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.body(erro);
+	}
+
+	@ExceptionHandler(EmprestimoJaDevolvidoException.class)
+	public ResponseEntity<ErrorResponseDto> handleEmprestimoJaDevolvidoException(
+			EmprestimoJaDevolvidoException exception) {
+		ErrorResponseDto erro = new ErrorResponseDto(
+				HttpStatus.CONFLICT.value(),
+				exception.getMessage(),
+				List.of()
+		);
+		return ResponseEntity
+				.status(HttpStatus.CONFLICT)
+				.body(erro);
+	}
+
 }
