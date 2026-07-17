@@ -1,5 +1,6 @@
 package com.yuri.api_biblioteca.exception;
 
+import com.yuri.api_biblioteca.dto.CampoErroDto;
 import com.yuri.api_biblioteca.dto.ErrorResponseDto;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
@@ -8,45 +9,56 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.List;
+
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ErrorResponseDto> handleValidationException(
-			MethodArgumentNotValidException exception) {
-		String mensagem = exception.getBindingResult()
-				.getFieldError()
-				.getDefaultMessage();
+	public ResponseEntity<ErrorResponseDto> handleValidationException(MethodArgumentNotValidException exception
+	) {
+		List<CampoErroDto> campos = exception
+				.getBindingResult()
+				.getFieldErrors()
+				.stream()
+				.map(fieldError -> new CampoErroDto(
+						fieldError.getField(),
+						fieldError.getDefaultMessage()
+				))
+				.toList();
 
 		ErrorResponseDto erro = new ErrorResponseDto(
-				HttpStatus.BAD_REQUEST.value(),
-				mensagem
+				HttpStatus.BAD_REQUEST.value(), "Erro de validação",
+				campos
 		);
 		return ResponseEntity.badRequest().body(erro);
+	};
+
+	@ExceptionHandler(LivroNaoEncontradoException.class)
+	public ResponseEntity<ErrorResponseDto> handleLivroNaoEncontradoException(
+			LivroNaoEncontradoException exception) {
+
+		ErrorResponseDto erro = new ErrorResponseDto(
+				HttpStatus.NOT_FOUND.value(),
+				exception.getMessage(),
+				List.of()
+		);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
 	}
 
 	@ExceptionHandler(IsbnDuplicadoException.class)
 	public ResponseEntity<ErrorResponseDto> handleIsbnDuplicadoException(
 			IsbnDuplicadoException exception) {
-		String mensagem = exception.getMessage();
 
 		ErrorResponseDto erro = new ErrorResponseDto(
-				HttpStatus.CONFLICT.value(), mensagem
+				HttpStatus.CONFLICT.value(),
+				exception.getMessage(),
+				List.of()
 		);
 
-		return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
+		return ResponseEntity
+				.status(HttpStatus.CONFLICT)
+				.body(erro);
 	}
-
-	@ExceptionHandler(LivroNaoEncontradoException.class)
-	public ResponseEntity<ErrorResponseDto> handleLivroNaoEncontradoException(
-			LivroNaoEncontradoException exception) {
-		ErrorResponseDto erro = new ErrorResponseDto(
-				HttpStatus.NOT_FOUND.value(),
-				exception.getMessage()
-		);
-
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
-	}
-
 
 }

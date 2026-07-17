@@ -50,22 +50,20 @@ public class LivroService {
 	}
 
 	public LivroResponseDto save(LivroRequestDto livroRequestDto) {
-		LivroEntity livro = livroMapper.toEntity(livroRequestDto);
-
 		if (livroRepository.existsByIsbn(livroRequestDto.isbn())) {
 			throw new IsbnDuplicadoException("ISBN já cadastrado");
 		}
+		LivroEntity livro = livroMapper.toEntity(livroRequestDto);
 		LivroEntity livroSalvo = livroRepository.save(livro);
 		return livroMapper.toResponseDto(livroSalvo);
 	}
 
 	public LivroResponseDto update(Long id, LivroRequestDto livroRequestDto) {
-		LivroEntity livroExistente = livroRepository.findById(id)
-				.orElseThrow(() -> new LivroNaoEncontradoException("Livro com o ID " + id + " não foi encontrado"));
-
 		if (livroRepository.existsByIsbnAndIdNot((livroRequestDto.isbn()), id)) {
 			throw  new IsbnDuplicadoException("ISBN já cadastrado");
 		}
+		LivroEntity livroExistente = livroRepository.findById(id)
+				.orElseThrow(() -> new LivroNaoEncontradoException("Livro com o ID " + id + " não foi encontrado"));
 
 		livroMapper.updateEntityFromDto(livroRequestDto, livroExistente);
 
