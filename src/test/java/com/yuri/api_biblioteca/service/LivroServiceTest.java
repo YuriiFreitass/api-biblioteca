@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -252,8 +251,61 @@ class LivroServiceTest {
 	}
 
 	@Test
-	void gerarSenha() {
-		System.out.println(new BCryptPasswordEncoder().encode("0855"));
+	void deveRetornarLivroQuandoIdExistir() {
+		Long id = 1L;
+
+		LivroEntity entity = criarLivroEntity();
+		LivroResponseDto response = criarLivroResponseDto();
+
+		when(livroRepository.findById(id)).thenReturn(Optional.of(entity));
+
+		when(livroMapper.toResponseDto(entity)).thenReturn(response);
+
+		LivroResponseDto resultado = livroService.findById(id);
+
+		assertNotNull(resultado);
+		assertEquals(response.id(), resultado.id());
+		assertEquals(resultado.titulo(), resultado.titulo());
+		assertEquals(resultado.autor(), resultado.autor());
+		assertEquals(resultado.isbn(), resultado.isbn());
+		assertEquals(resultado.anoPublicacao(), resultado.anoPublicacao());
+		assertEquals(resultado.quantidade(), resultado.quantidade());
+
+		verify(livroRepository).findById(id);
+		verify(livroMapper).toResponseDto(entity);
+	}
+
+	@Test
+	void deveLancarLivroNaoEncontradoExceptionQuandoIdNaoExistir() {
+		Long id = 100L;
+
+		when(livroRepository.findById(id)).thenReturn(Optional.empty());
+
+		LivroNaoEncontradoException exception = assertThrows(
+				LivroNaoEncontradoException.class, () -> livroService.findById(id));
+
+		assertTrue(exception.getMessage().contains(id.toString()));
+
+		verify(livroRepository).findById(id);
+		verify(livroMapper, never()).toResponseDto(any());
+	}
+
+	@Test
+	void deveLancarIsbnDuplicadoExceptionAoAtualizarComIsbnJaExistente() {
+		Long id = 1L;
+		LivroRequestDto request = criarLivroRequestDto();
+
+		when(livroRepository.existsByIsbnAndIdNot(request.isbn(), id)).thenReturn(true);
+
+		IsbnDuplicadoException exception = assertThrows(
+				IsbnDuplicadoException.class, () -> livroService.update(id, request));
+
+		assertEquals("ISBN já cadastrado", exception.getMessage());
+
+		verify(livroRepository).existsByIsbnAndIdNot(request.isbn(), id);
+		verify(livroRepository, never()).findById(anyLong());
+		verify(livroMapper, never()).updateEntityFromDto(any(), any());
+		verify(livroRepository, never()).save(any());
 	}
 
 	// ===========================
