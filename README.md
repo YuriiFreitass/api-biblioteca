@@ -80,7 +80,7 @@ Banco de Dados
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/SEU-USUARIO/api-biblioteca.git
+git clone https://github.com/YuriiFreitass/api-biblioteca.git
 ```
 
 ### 2. Entre na pasta do projeto
