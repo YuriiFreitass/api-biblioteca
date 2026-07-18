@@ -2,6 +2,16 @@
 
 API REST para gerenciamento de livros e empréstimos, desenvolvida com Java e Spring Boot.
 
+## Swagger
+
+### Visão geral
+
+![Swagger](docs/swagger-home.png)
+
+### Consulta de livro
+
+![Consulta](docs/get-livro.png)
+
 ## Funcionalidades
 
 ### Livros
